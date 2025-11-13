@@ -1,70 +1,89 @@
-import java.util.ArrayList;
-import menu.*;
+import java.util.*;
+import java.io.*;
 
-// ---------- MenuDisplay Class for displaying the menu / normal class for encapsulation----------
-
+// ---------- MenuDisplay Class ----------
 public class MenuDisplay {
 
-    public static ArrayList<MenuItem> initializeMenu() {
+    private static final String MENU_FILE = "menu.csv";
 
+    // Load menu from CSV file
+    public static ArrayList<MenuItem> loadMenu() {
         ArrayList<MenuItem> menu = new ArrayList<>();
+        File file = new File(MENU_FILE);
+        if (!file.exists()) return menu; // empty menu if file doesn't exist
 
-        menu.add(new Appetizer("Lumpia", 450, "Crispy vegetable spring rolls"));
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 4);
+                if (parts.length < 4) continue;
 
-        menu.add(new Appetizer("Calamari", 550, "Fried squid rings with garlic aioli"));
+                String category = parts[0];
+                String name = parts[1];
+                double price = Double.parseDouble(parts[2]);
+                String description = parts[3];
 
-        menu.add(new MainCourse("Chicken Adobo", 700, "Soy-marinated chicken stewed with garlic"));
-
-        menu.add(new MainCourse("Sinigang", 650, "Sour tamarind soup with pork and vegetables"));
-
-        menu.add(new Dessert("Halo-Halo", 400, "Shaved ice with beans, fruits, and milk"));
-
-        menu.add(new Dessert("Leche Flan", 350, "Creamy caramel custard"));
-
-        menu.add(new Drinks("Calamansi Juice", 150, "Fresh calamansi citrus drink"));
-
-        menu.add(new Drinks("Buko Juice", 120, "Fresh coconut water"));
-
-        menu.add(new Drinks("Sago't Gulaman", 100, "Sweetened drink with tapioca and jelly"));
-
-        return menu;
-
-    }
-
-    public static void displayByCategory(ArrayList<MenuItem> menu, String category) {
-
-        System.out.println("\n--- " + category + " Menu ---");
-
-        boolean found = false;
-
-        for (MenuItem item : menu) {
-
-            if (item.getCategory().equals(category)) {
-
-                item.displayItem();
-
-                found = true;
-
+                switch (category) {
+                    case "Appetizer" -> menu.add(new Appetizer(name, price, description));
+                    case "Main Course" -> menu.add(new MainCourse(name, price, description));
+                    case "Dessert" -> menu.add(new Dessert(name, price, description));
+                    case "Drinks" -> menu.add(new Drinks(name, price, description));
+                }
             }
-
+        } catch (Exception e) {
+            System.out.println("Error reading menu file: " + e.getMessage());
         }
-
-        if (!found) System.out.println("No items in this category.");
-
+        return menu;
     }
 
+    // Save menu to CSV file
+    public static void saveMenu(ArrayList<MenuItem> menu) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(MENU_FILE))) {
+            for (MenuItem item : menu) {
+                pw.println(item.getCategory() + "," + item.getName() + "," + item.getPrice() + "," + item.getDescription());
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving menu: " + e.getMessage());
+        }
+    }
+
+    // Display full menu
     public static void displayFullMenu(ArrayList<MenuItem> menu) {
-
         System.out.println("\n--- Full Menu ---");
-
-        for (int i = 0; i < menu.size(); i++) {
-
-            System.out.print((i + 1) + ". ");
-
-            menu.get(i).displayItem();
-
+        if (menu.isEmpty()) {
+            System.out.println("Menu is empty.");
+            return;
         }
-
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.get(i);
+            System.out.println("[" + item.getCategory() + "] " + (i + 1) + ". " + item.getName() +
+                    " - ₱" + item.getPrice() + " - " + item.getDescription());
+        }
     }
 
+    // Display menu by category with numbering
+    public static void displayByCategory(ArrayList<MenuItem> menu, String category) {
+        System.out.println("\n--- " + category + " Menu ---");
+        ArrayList<MenuItem> catItems = getItemsByCategory(menu, category);
+        if (catItems.isEmpty()) {
+            System.out.println("No items in this category.");
+            return;
+        }
+        for (int i = 0; i < catItems.size(); i++) {
+            MenuItem item = catItems.get(i);
+            System.out.println("[" + item.getCategory() + "] " + (i + 1) + ". " + item.getName() +
+                    " - ₱" + item.getPrice() + " - " + item.getDescription());
+        }
+    }
+
+    // Helper: get list of items by category
+    public static ArrayList<MenuItem> getItemsByCategory(ArrayList<MenuItem> menu, String category) {
+        ArrayList<MenuItem> catItems = new ArrayList<>();
+        for (MenuItem item : menu) {
+            if (item.getCategory().equalsIgnoreCase(category)) {
+                catItems.add(item);
+            }
+        }
+        return catItems;
+    }
 }
