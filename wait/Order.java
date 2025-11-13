@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import menu.MenuItem;
 
 // ---------- Order Class that seprates the code of receipt and when ordering/ normal class for encapsulation ----------
 
