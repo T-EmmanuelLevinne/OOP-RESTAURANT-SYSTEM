@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Admin {
-
+public class Admin extends User {
     private final String username = "admin";
     private final String password = "1234";
+
+    public Admin() {
+        super("Admin"); // Default name for admin user
+    }
 
     // Admin login
     public boolean login(Scanner scanner) {
@@ -100,12 +103,12 @@ public class Admin {
                             case "Drinks" -> new Drinks(name, price, desc);
                             default -> null;
                         };
+
                         if (newItem != null) {
                             menu.add(newItem);
                             System.out.println(name + " added to " + category);
                         }
                     }
-
                     case 2 -> {
                         // Edit existing item
                         ArrayList<MenuItem> catItems = MenuDisplay.getItemsByCategory(menu, category);
@@ -113,13 +116,16 @@ public class Admin {
                             System.out.println("No items to edit.");
                             break;
                         }
+
                         System.out.print("Enter item number to edit: ");
                         int itemNum = scanner.nextInt();
                         scanner.nextLine();
+
                         if (itemNum < 1 || itemNum > catItems.size()) {
                             System.out.println("Invalid item number.");
                             break;
                         }
+
                         MenuItem item = catItems.get(itemNum - 1);
                         System.out.print("New name (" + item.getName() + "): ");
                         String newName = scanner.nextLine();
@@ -135,7 +141,6 @@ public class Admin {
 
                         System.out.println("Item updated!");
                     }
-
                     case 3 -> {
                         // Remove item
                         ArrayList<MenuItem> catItems = MenuDisplay.getItemsByCategory(menu, category);
@@ -143,23 +148,25 @@ public class Admin {
                             System.out.println("No items to remove.");
                             break;
                         }
+
                         System.out.print("Enter item number to remove: ");
                         int itemNum = scanner.nextInt();
                         scanner.nextLine();
+
                         if (itemNum < 1 || itemNum > catItems.size()) {
                             System.out.println("Invalid item number.");
                             break;
                         }
+
                         MenuItem removed = catItems.get(itemNum - 1);
                         menu.remove(removed);
                         System.out.println(removed.getName() + " removed from " + category);
                     }
-
                     case 4 -> categoryMenu = false;
-
                     default -> System.out.println("Invalid choice.");
                 }
             }
         }
     }
 }
+
