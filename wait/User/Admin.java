@@ -91,8 +91,15 @@ public class Admin extends User {
                         System.out.print("Enter name: ");
                         String name = scanner.nextLine();
                         System.out.print("Enter price: ");
-                        double price = scanner.nextDouble();
-                        scanner.nextLine();
+                        double price = -1;
+                        if (scanner.hasNextDouble()) {
+                            price = scanner.nextDouble();
+                            scanner.nextLine();
+                        } else {
+                            scanner.nextLine();
+                            System.out.println("It must be a number");
+                            continue;
+                        }
                         System.out.print("Enter description: ");
                         String desc = scanner.nextLine();
 
@@ -133,7 +140,13 @@ public class Admin extends User {
 
                         System.out.print("New price (" + item.getPrice() + "): ");
                         String priceInput = scanner.nextLine();
-                        if (!priceInput.isEmpty()) item.setPrice(Double.parseDouble(priceInput));
+                        if (!priceInput.isEmpty()) {
+                            try {
+                                item.setPrice(Double.parseDouble(priceInput));
+                            } catch (NumberFormatException e) {
+                                System.out.println("It must be a number");
+                            }
+                        }
 
                         System.out.print("New description (" + item.getDescription() + "): ");
                         String newDesc = scanner.nextLine();
