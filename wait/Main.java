@@ -1,9 +1,7 @@
 import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
 
         // Load menu from storage or initialize empty
@@ -14,7 +12,6 @@ public class Main {
         boolean running = true;
 
         while (running) {
-
             System.out.println("\nLogin as?");
             System.out.println("1. Customer");
             System.out.println("2. Admin");
@@ -33,7 +30,6 @@ public class Main {
                         System.out.println("Welcome, " + cname + "!");
 
                         boolean browsing = true;
-
                         while (browsing) {
                             System.out.println("\n--- Main Menu ---");
                             System.out.println("1. View Appetizers");
@@ -56,7 +52,7 @@ public class Main {
                                     case 5 -> MenuDisplay.displayFullMenu(menu);
                                     case 6 -> {
                                         browsing = false;
-                                        customer.getOrder().startOrdering(scanner, menu);
+                                        customer.getOrder().startOrdering(scanner, menu, customer.getName());
                                     }
                                     default -> System.out.println("Invalid option. Please try again.");
                                 }
@@ -66,23 +62,19 @@ public class Main {
                             }
                         }
                     }
-
                     case 2 -> {
                         if (admin.login(scanner)) {
                             admin.modifyMenuByCategory(menu, scanner);
                             MenuDisplay.saveMenu(menu); // Save changes immediately
                         }
                     }
-
                     case 3 -> {
                         System.out.println("Exiting system... Goodbye!");
                         running = false;
                         MenuDisplay.saveMenu(menu); // Save before exiting
                     }
-
                     default -> System.out.println("Invalid choice. Try again.");
                 }
-
             } else {
                 scanner.nextLine();
                 System.out.println("Invalid input. Please enter a number (1-3).");
@@ -92,3 +84,4 @@ public class Main {
         scanner.close();
     }
 }
+
