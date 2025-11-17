@@ -4,7 +4,7 @@ package order;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import model.MenuItem;
+import menus.MenuItem;
 
 public class Order {
     private ArrayList<MenuItem> items;
@@ -24,7 +24,7 @@ public class Order {
     }
 
     public void displayReceipt(String customerName) {
-        System.out.println("\n--- Your Order ---");
+        System.out.println("\n--- Receipt ---");
         for (MenuItem item : items) item.displayItem();
         System.out.println("Total (with 12% VAT): ₱" + String.format("%.2f", calculateTotal()));
         System.out.println("Name of the customer: " + customerName);
@@ -106,4 +106,3 @@ public class Order {
         }
     }
 }
-
