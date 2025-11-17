@@ -1,5 +1,3 @@
-// ---------- Order Class that seprates the code of receipt and when ordering/ normal class for encapsulation ----------
-
 package order;
 
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ public class Order {
 
     public void startOrdering(Scanner scanner, ArrayList<MenuItem> menu, String customerName) {
         boolean ordering = true;
+
         while (ordering) {
             System.out.println("\n--- Order Menu ---");
             System.out.println("1. Appetizers");
@@ -39,10 +38,17 @@ public class Order {
             System.out.println("3. Desserts");
             System.out.println("4. Drinks");
             System.out.println("5. Finish Ordering");
-            System.out.print("Choose a category: ");
+            System.out.print("Choose an option: ");
 
-            int categoryChoice = scanner.nextInt();
-            scanner.nextLine();
+            int categoryChoice;
+            try {
+                categoryChoice = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                scanner.nextLine();
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             switch (categoryChoice) {
                 case 1 -> orderFromCategory(scanner, menu, "Appetizer");
@@ -75,34 +81,75 @@ public class Order {
                 categoryItems.get(i).displayItem();
             }
 
-            System.out.print("\nEnter item number to add to order (0 or 'back' to go back): ");
-
-            try {
-                if (scanner.hasNextInt()) {
-                    int choice = scanner.nextInt();
-                    scanner.nextLine();
-
-                    if (choice == 0) {
-                        selecting = false;
-                    } else if (choice > 0 && choice <= categoryItems.size()) {
-                        addItem(categoryItems.get(choice - 1));
-                        System.out.println("\n✓ Added: " + categoryItems.get(choice - 1).getName());
-                        System.out.println("Continue selecting items from this category...\n");
-                    } else {
-                        System.out.println("Invalid choice. Please enter a number between 1 and " + categoryItems.size() + ", or 0 to go back.");
-                    }
-                } else {
-                    String input = scanner.nextLine().trim().toLowerCase();
-                    if (input.equals("back") || input.equals("b") || input.equals("0")) {
-                        selecting = false;
-                    } else {
-                        System.out.println("Invalid input. Please enter a number (1-" + categoryItems.size() + " to add item, 0 or 'back' to go back).");
-                    }
+            // Display current order
+            if (!items.isEmpty()) {
+                System.out.println("\nCurrent Order:");
+                for (int i = 0; i < items.size(); i++) {
+                    System.out.print((i + 1) + ". ");
+                    items.get(i).displayItem();
                 }
-            } catch (Exception e) {
-                scanner.nextLine();
-                System.out.println("Invalid input. Please enter a number (1-" + categoryItems.size() + " to add item, 0 or 'back' to go back).");
             }
+
+            System.out.print("\nEnter item number to add to order, 'r' to remove an item, or 0/back to go back: ");
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            // Remove item
+            if (input.equals("r")) {
+                removeItemInCategory(scanner);
+                continue; // back to selecting loop
+            }
+
+            // Go back
+            if (input.equals("0") || input.equals("back") || input.equals("b")) {
+                selecting = false;
+                continue;
+            }
+
+            // Add item
+            try {
+                int choice = Integer.parseInt(input);
+                if (choice > 0 && choice <= categoryItems.size()) {
+                    addItem(categoryItems.get(choice - 1));
+                    System.out.println("\n✓ Added: " + categoryItems.get(choice - 1).getName());
+                } else {
+                    System.out.println("Invalid choice. Please enter a number between 1 and " + categoryItems.size());
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Enter a valid number, 'r' to remove, or 0/back to go back.");
+            }
+        }
+    }
+
+    private void removeItemInCategory(Scanner scanner) {
+        if (items.isEmpty()) {
+            System.out.println("No items in your order to remove.");
+            return;
+        }
+
+        System.out.println("\n--- Remove Item ---");
+        for (int i = 0; i < items.size(); i++) {
+            System.out.print((i + 1) + ". ");
+            items.get(i).displayItem();
+        }
+
+        System.out.print("Enter item number to remove (0 to cancel): ");
+        String input = scanner.nextLine().trim();
+
+        if (input.equals("0")) {
+            System.out.println("Removal cancelled.");
+            return;
+        }
+
+        try {
+            int choice = Integer.parseInt(input);
+            if (choice > 0 && choice <= items.size()) {
+                MenuItem removed = items.remove(choice - 1);
+                System.out.println("✓ Removed: " + removed.getName());
+            } else {
+                System.out.println("Invalid item number.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a valid number.");
         }
     }
 }
