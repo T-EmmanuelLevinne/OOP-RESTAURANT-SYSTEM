@@ -1,11 +1,33 @@
 package order;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import menus.MenuItem;
+
+import menus.*;
 
 public class Order {
     private ArrayList<MenuItem> items;
+
+    public void saveReceipt(String customerName) {
+        String fileName = customerName.replaceAll("[^a-zA-Z0-9 ]", "").trim() + "_receipt.txt";
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
+            pw.println("----- RECEIPT -----");
+
+            for (MenuItem item : items) {
+                pw.println(item.getName() + " - ₱" + String.format("%.2f", item.getPrice()));
+            }
+
+            pw.println("--------------------");
+            pw.println("Total (with 12% VAT): ₱" + String.format("%.2f", calculateTotal()));
+            pw.println("Customer: " + customerName);
+
+            System.out.println("\nReceipt saved as: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error saving receipt: " + e.getMessage());
+        }
+    }
 
     public Order() {
         items = new ArrayList<>();
@@ -53,7 +75,7 @@ public class Order {
             switch (categoryChoice) {
                 case 1 -> orderFromCategory(scanner, menu, "Appetizer");
                 case 2 -> orderFromCategory(scanner, menu, "Main Course");
-                case 3 -> orderFromCategory(scanner, menu, "Dessert");
+                case 3 -> orderFromCategory(scanner, menu,  "Dessert");
                 case 4 -> orderFromCategory(scanner, menu, "Drinks");
                 case 5 -> ordering = false;
                 default -> System.out.println("Invalid choice. Try again.");
@@ -61,7 +83,9 @@ public class Order {
         }
 
         displayReceipt(customerName);
+        saveReceipt(customerName);
         System.out.println("Salamat po! Thank you for your order!");
+
     }
 
     private void orderFromCategory(Scanner scanner, ArrayList<MenuItem> menu, String category) {
