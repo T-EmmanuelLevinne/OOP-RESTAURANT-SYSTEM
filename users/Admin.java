@@ -43,7 +43,8 @@ public class Admin extends User {
             System.out.println("2. Main Course");
             System.out.println("3. Dessert");
             System.out.println("4. Drinks");
-            System.out.println("5. Exit Admin Menu");
+            System.out.println("5. View Full Menu");
+            System.out.println("6. Exit Admin Menu");
             System.out.print("Select category to manage: ");
 
             int catChoice = -1;
@@ -56,17 +57,22 @@ public class Admin extends User {
                 continue;
             }
 
-            String category = switch (catChoice) {
+            if (catChoice == 5) {
+                MenuDisplay.displayFullMenu(menu);
+                continue; // Go back to main admin menu
+            }
+
+            String category = String.valueOf(switch (catChoice) {
                 case 1 -> "Appetizer";
                 case 2 -> "Main Course";
                 case 3 -> "Dessert";
                 case 4 -> "Drinks";
-                case 5 -> null;
+                case 6 -> null;
                 default -> {
                     System.out.println("Invalid choice.");
                     yield null;
                 }
-            };
+            });
 
             if (category == null) {
                 editing = false;
@@ -206,3 +212,5 @@ public class Admin extends User {
         }
     }
 }
+
+
