@@ -12,7 +12,7 @@ public class Order {
     public void saveReceipt(String customerName) {
         String fileName = customerName.replaceAll("[^a-zA-Z0-9 ]", "").trim() + "_receipt.txt";
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
             pw.println("----- RECEIPT -----");
 
             for (MenuItem item : items) {
