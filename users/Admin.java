@@ -98,7 +98,12 @@ public class Admin extends User {
                         // Add new item
                         System.out.print("Enter name: ");
                         String name = scanner.nextLine();
-                        System.out.print("Enter price: ");
+                        boolean itemExists = menu.stream().anyMatch(item -> item.getName().equals(name));
+                        if (itemExists) {
+                            System.out.println("Name already exists.");
+                            break;
+                        }
+                        else System.out.print("Enter price: ");
                         double price = -1;
                         if (scanner.hasNextDouble()) {
                             price = scanner.nextDouble();
