@@ -2,12 +2,12 @@ package users;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import model.MenuItem;
-import model.Appetizer;
-import model.MainCourse;
-import model.Dessert;
-import model.Drinks;
-import util.MenuDisplay;
+import menus.MenuItem;
+import menus.Appetizer;
+import menus.MainCourse;
+import menus.Dessert;
+import menus.Drinks;
+import display.MenuDisplay;
 
 public class Admin extends User {
     private final String username = "admin";
@@ -134,7 +134,7 @@ public class Admin extends User {
 
                         System.out.print("Enter item number to edit: ");
                         int itemNum = scanner.nextInt();
-                        scanner.nextLine();
+                        scanner.nextLine(); // clear buffer
 
                         if (itemNum < 1 || itemNum > catItems.size()) {
                             System.out.println("Invalid item number.");
@@ -142,13 +142,20 @@ public class Admin extends User {
                         }
 
                         MenuItem item = catItems.get(itemNum - 1);
-                        System.out.print("New name (" + item.getName() + "): ");
-                        String newName = scanner.nextLine();
-                        if (!newName.isEmpty()) item.setName(newName);
 
-                        System.out.print("New price (" + item.getPrice() + "): ");
+                        // ----- NAME -----
+                        System.out.print("New name (Enter 'next' to continue) (" + item.getName() + "): ");
+                        String newName = scanner.nextLine();
+
+                        if (!newName.equalsIgnoreCase("next") && !newName.isEmpty()) {
+                            item.setName(newName);
+                        }
+
+                        // ----- PRICE -----
+                        System.out.print("New price (Enter 'next' to continue) (" + item.getPrice() + "): ");
                         String priceInput = scanner.nextLine();
-                        if (!priceInput.isEmpty()) {
+
+                        if (!priceInput.equalsIgnoreCase("next") && !priceInput.isEmpty()) {
                             try {
                                 item.setPrice(Double.parseDouble(priceInput));
                             } catch (NumberFormatException e) {
@@ -156,9 +163,13 @@ public class Admin extends User {
                             }
                         }
 
-                        System.out.print("New description (" + item.getDescription() + "): ");
+                        // ----- DESCRIPTION -----
+                        System.out.print("New description (Enter 'next' to continue) (" + item.getDescription() + "): ");
                         String newDesc = scanner.nextLine();
-                        if (!newDesc.isEmpty()) item.setDescription(newDesc);
+
+                        if (!newDesc.equalsIgnoreCase("next") && !newDesc.isEmpty()) {
+                            item.setDescription(newDesc);
+                        }
 
                         System.out.println("Item updated!");
                     }
@@ -190,4 +201,3 @@ public class Admin extends User {
         }
     }
 }
-
